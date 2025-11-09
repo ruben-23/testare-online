@@ -1,0 +1,2 @@
+ALTER TABLE test_app.users
+    MODIFY COLUMN parola VARCHAR(255) NOT NULL;
