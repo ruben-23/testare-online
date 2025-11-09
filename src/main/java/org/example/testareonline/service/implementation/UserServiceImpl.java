@@ -7,6 +7,7 @@ import org.example.testareonline.entity.User;
 import org.example.testareonline.mapper.UserMapper;
 import org.example.testareonline.repository.UserRepository;
 import org.example.testareonline.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,11 +20,13 @@ public class UserServiceImpl implements UserService {
 
     UserRepository userRepository;
     UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
     public UserDTO createUser(UserRequest request) {
         User user = userMapper.toEntity(request);
+        user.setParola(passwordEncoder.encode(user.getParola()));
         return userMapper.toDTO(userRepository.save(user));
     }
 
