@@ -2,12 +2,14 @@ package org.example.testareonline.controller;
 
 import lombok.AllArgsConstructor;
 import org.example.testareonline.dto.request.LoginRequest;
+import org.example.testareonline.dto.request.UserRequest;
 import org.example.testareonline.dto.response.JwtResponse;
 import org.example.testareonline.dto.response.UserDTO;
 import org.example.testareonline.entity.User;
 import org.example.testareonline.mapper.UserMapper;
 import org.example.testareonline.repository.UserRepository;
 import org.example.testareonline.service.JwtService;
+import org.example.testareonline.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +26,7 @@ public class AuthController {
 
     private final AuthenticationManager authManager;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final UserMapper userMapper;
     JwtService jwtService;
 
@@ -40,6 +43,20 @@ public class AuthController {
         String token = jwtService.generateToken(user);
 
         return ResponseEntity.ok(new JwtResponse(token));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<JwtResponse> register(@RequestBody UserRequest request) {
+        if (userRepository.existsByUsername(request.username())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+        userService.createUser(request);
+        User user = userRepository.findByUsername(request.username())
+                .orElseThrow();
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new JwtResponse(jwtService.generateToken(user)));
     }
 
     @GetMapping("/validate")
