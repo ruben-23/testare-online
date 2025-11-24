@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.example.testareonline.entity.Role;
 import org.example.testareonline.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class JwtService {
         return Jwts.builder()
                 .subject(user.getId().toString())
                 .claim("username", user.getUsername())
-                .claim("rol", user.getRol()    )
+                .claim("rol", user.getRol().name())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * tokenExpiration))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
@@ -51,4 +52,9 @@ public class JwtService {
     public Integer getIdFromToken(String token) {
         return Integer.valueOf(getClaims(token).getSubject());
     }
+
+    public Role getRoleFromToken(String token) {
+        return Role.valueOf(getClaims(token).get("rol", String.class));
+    }
+
 }
