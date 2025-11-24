@@ -3,6 +3,7 @@ package org.example.testareonline.service.implementation;
 import lombok.AllArgsConstructor;
 import org.example.testareonline.dto.request.UserRequest;
 import org.example.testareonline.dto.response.UserDTO;
+import org.example.testareonline.entity.Role;
 import org.example.testareonline.entity.User;
 import org.example.testareonline.mapper.UserMapper;
 import org.example.testareonline.repository.UserRepository;
@@ -27,7 +28,7 @@ public class UserServiceImpl implements UserService {
     public UserDTO createUser(UserRequest request) {
         User user = userMapper.toEntity(request);
         user.setParola(passwordEncoder.encode(user.getParola()));
-        user.setRol("USER");
+        user.setRol(Role.USER);
         return userMapper.toDTO(userRepository.save(user));
     }
 
@@ -53,7 +54,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         user.setUsername(request.username());
         user.setParola(request.parola());
-        user.setRol(request.rol());
+        user.setRol(Role.fromString(request.rol()));
 
         return userMapper.toDTO(userRepository.save(user));
     }

@@ -24,8 +24,9 @@ public class User {
     @Column(nullable = false)
     private String parola;
 
-    @Column(nullable = false, length = 50)
-    private String rol;
+    @Column(name = "rol")
+    @Enumerated(EnumType.STRING)
+    private Role rol;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Test> teste;
