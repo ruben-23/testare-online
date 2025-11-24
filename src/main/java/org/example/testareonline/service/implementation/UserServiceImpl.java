@@ -27,6 +27,7 @@ public class UserServiceImpl implements UserService {
     public UserDTO createUser(UserRequest request) {
         User user = userMapper.toEntity(request);
         user.setParola(passwordEncoder.encode(user.getParola()));
+        user.setRol("USER");
         return userMapper.toDTO(userRepository.save(user));
     }
 
@@ -35,7 +36,7 @@ public class UserServiceImpl implements UserService {
     public UserDTO getUserById(Integer id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return userMapper.toDTO(userRepository.save(user));
+        return userMapper.toDTO(user);
     }
 
     @Override
