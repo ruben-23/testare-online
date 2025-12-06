@@ -11,6 +11,8 @@ import TesteLayout from './modules/teste/TesteLayout.jsx'
 import Logout from "./pages/Logout.jsx";
 import Profile from "./pages/Profile";
 import ProtectedRoute from "./components/ProtectedRoutes.jsx";
+import TakeTest from "./modules/teste/TakeTest.jsx";
+import TestResult from "./modules/teste/TestResult.jsx";
 
 function App() {
     return (
@@ -35,6 +37,8 @@ function App() {
                 <Route path="teste" element={<TesteLayout />}>
                     <Route index element={<TesteList />} />
                     <Route path=":id" element={<Test />} />
+                    <Route path=":id/take" element={<TakeTest />} />
+                    <Route path=":id/result" element={<TestResult />} />
                 </Route>
             </Route>
         </Routes>

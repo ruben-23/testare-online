@@ -5,7 +5,6 @@ import "./styles/Test.css";
 const TesteLayout = () => {
     return (
         <div className="teste-layout">
-            <h1>Teste</h1>
             <Outlet />
         </div>
     );

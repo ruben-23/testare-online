@@ -106,3 +106,27 @@
     font-size: 0.85rem;
     color: #666;
 }
+
+.take-test-option {
+    display: block;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+.take-test-option input {
+    margin-right: 10px;
+}
+
+.options-container {
+    margin-left: 20px;
+}
+/* Layout with right-side active users panel */
+.test-with-users-layout {
+    display: flex;
+    gap: 20px;
+}
+
+/* Left side */
+.test-content {
+    flex: 1;
+}

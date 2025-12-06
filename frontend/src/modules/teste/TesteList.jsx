@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-import testeService from "../../services/testeService.js";
-import domeniiService from "../../services/domeniiService.js";
-import userService from "../../services/userService.js";
+import testeService from "../../services/testeService";
+import domeniiService from "../../services/domeniiService";
+import userService from "../../services/userService";
+import { useAuth } from "../../context/AuthContext";
 
 import "./styles/Test.css";
 
 const TesteList = () => {
+    const { token } = useAuth();
+    const navigate = useNavigate();
+
     const [tests, setTests] = useState([]);
     const [domenii, setDomenii] = useState([]);
+    const [currentUser, setCurrentUser] = useState(null);
+
     const [search, setSearch] = useState("");
     const [selectedDomeniu, setSelectedDomeniu] = useState("all");
     const [sortBy, setSortBy] = useState("data");
 
-    // Load all data
     useEffect(() => {
         loadData();
     }, []);
@@ -26,60 +31,71 @@ const TesteList = () => {
                 domeniiService.getAll()
             ]);
 
-            // Convert domenii array → lookup map for fast access
-            const domeniiMap = {};
-            domeniiRes.forEach(d => {
-                domeniiMap[d.id] = d.nume;
-            });
+            // Load user from token (optional endpoint)
+            let userId = null;
+            if (token) {
+                userId = JSON.parse(atob(token.split(".")[1])).id;
+            }
+            // const userId = JSON.parse(atob(token.split(".")[1])).id;
 
-            // For each test, fetch username and map domeniu name
+            if (userId !== null) {
+                const userData = await userService.getById(userId);
+                setCurrentUser(userData);
+            }
+            // const userData = await userService.getById(userId);
+            // setCurrentUser(userData);
+
+            const domeniiMap = {};
+            domeniiRes.forEach(d => (domeniiMap[d.id] = d.nume));
+
             const testsWithNames = await Promise.all(
                 testsRes.map(async (t) => {
-                    // get username by id
-                    const userData = await userService.getById(t.idUser);
-
+                    const author = await userService.getById(t.idUser);
                     return {
                         id: t.id,
                         title: t.titlu,
                         date: t.dataCrearii,
                         domeniu: domeniiMap[t.idDomeniu],
                         idDomeniu: t.idDomeniu,
-                        username: userData.username
+                        idUser: t.idUser,
+                        username: author.username
                     };
                 })
             );
 
             setTests(testsWithNames);
             setDomenii(domeniiRes);
-        } catch (e) {
-            console.error("Failed loading tests or domenii", e);
+
+        } catch (err) {
+            console.error(err);
         }
     };
 
-    // FILTER BY SEARCH
-    let filtered = tests.filter(test =>
-        test.title.toLowerCase().includes(search.toLowerCase())
+    // SEARCH
+    let filtered = tests.filter(t =>
+        t.title.toLowerCase().includes(search.toLowerCase())
     );
 
     // FILTER BY DOMENIU
     if (selectedDomeniu !== "all") {
-        filtered = filtered.filter(test => test.idDomeniu === Number(selectedDomeniu));
+        filtered = filtered.filter(t =>
+            t.idDomeniu === Number(selectedDomeniu)
+        );
     }
 
     // SORT
-    const sorted = [...filtered].sort((a, b) => {
-        return new Date(a.date) - new Date(b.date);
-    });
+    const sorted = [...filtered].sort((a, b) =>
+        new Date(a.date) - new Date(b.date)
+    );
 
     return (
         <div>
 
-            {/* HEADER ROW */}
+            {/* HEADER CONTROLS (unchanged) */}
             <div className="teste-header-row">
-
+                <h1>Teste</h1>
                 <div className="teste-controls">
 
-                    {/* SEARCH */}
                     <input
                         type="text"
                         placeholder="Search teste…"
@@ -88,19 +104,19 @@ const TesteList = () => {
                         className="teste-search"
                     />
 
-                    {/* DOMENIU FILTER */}
                     <select
                         className="teste-sort"
                         value={selectedDomeniu}
                         onChange={(e) => setSelectedDomeniu(e.target.value)}
                     >
                         <option value="all">Toate Domeniile</option>
-                        {domenii.map((dom) => (
-                            <option key={dom.id} value={dom.id}>{dom.nume}</option>
+                        {domenii.map(dom => (
+                            <option key={dom.id} value={dom.id}>
+                                {dom.nume}
+                            </option>
                         ))}
                     </select>
 
-                    {/* SORT BY DATE */}
                     <select
                         className="teste-sort"
                         value={sortBy}
@@ -111,26 +127,42 @@ const TesteList = () => {
                 </div>
             </div>
 
-            {/* TESTE GRID */}
+            {/* TEST CARDS */}
             <div className="teste-grid">
-                {sorted.map((t) => (
-                    <div className="teste-card" key={t.id}>
-                        <h3>{t.title}</h3>
+                {sorted.map(test => (
+                    <div className="teste-card" key={test.id}>
+                        <h3>{test.title}</h3>
                         <p className="teste-small">
-                            Domeniu: <strong>{t.domeniu}</strong>
+                            Domeniu: <strong>{test.domeniu}</strong>
+                        </p>
+                        <p className="teste-small">
+                            Autor: <strong>{test.username}</strong>
+                        </p>
+                        <p className="teste-small">
+                            Data: <strong>{test.date}</strong>
                         </p>
 
-                        <p className="teste-small">
-                            Autor: <strong>{t.username}</strong>
-                        </p>
+                        {/* BUTTONS */}
+                        <button
+                            className="teste-btn"
+                            onClick={() => navigate(`/teste/${test.id}/take`)}
+                        >
+                            Take Test
+                        </button>
 
-                        <p className="teste-small">
-                            Data: <strong>{t.date}</strong>
-                        </p>
+                        {/* AUTHOR OPTIONS */}
+                        {currentUser?.id === test.idUser && (
+                            <>
+                                <button className="teste-btn teste-edit">
+                                    Edit
+                                </button>
 
-                        <Link to={`/teste/${t.id}`} className="teste-btn">
-                            View Test
-                        </Link>
+                                <button className="teste-btn teste-delete">
+                                    Delete
+                                </button>
+                            </>
+                        )}
+
                     </div>
                 ))}
             </div>
@@ -140,4 +172,3 @@ const TesteList = () => {
 };
 
 export default TesteList;
-
