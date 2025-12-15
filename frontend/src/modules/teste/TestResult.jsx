@@ -1,9 +1,10 @@
 import React from "react";
-import { useLocation, useParams } from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 
 const TestResult = () => {
     const { state } = useLocation();
     const { id } = useParams();
+    const navigate  = useNavigate();
 
     if (!state?.result) {
         return <p>No result data. Please complete the test first.</p>;
@@ -29,7 +30,10 @@ const TestResult = () => {
             </div>
 
             <button className="teste-btn" onClick={() => window.history.back()}>
-                Back to Tests
+                Take again
+            </button>
+            <button className="teste-btn" onClick={() => navigate(`/teste`)}>
+                Back to Teste
             </button>
         </div>
     );

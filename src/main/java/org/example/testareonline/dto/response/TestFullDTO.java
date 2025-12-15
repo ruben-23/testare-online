@@ -19,4 +19,5 @@ public class TestFullDTO {
     private Integer idUser;
     private Integer idDomeniu;
     private List<IntrebareFullDTO> intrebari;
+    private String guestUsername;
 }

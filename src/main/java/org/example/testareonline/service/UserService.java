@@ -11,4 +11,5 @@ public interface UserService {
     List<UserDTO> getAllUsers();
     UserDTO updateUser(Integer id, UserRequest request);
     void deleteUser(Integer id);
+    String findUsernameById(Integer id);
 }

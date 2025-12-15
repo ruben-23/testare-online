@@ -3,8 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import testeService from "../../services/testeService";
 import "./styles/Test.css";
 import ActiveUsers from "./ActiveUsers.jsx";
+import {useAuth} from "../../context/AuthContext.jsx";
 
 const TakeTest = () => {
+    const { user } = useAuth();
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -12,15 +14,27 @@ const TakeTest = () => {
     const [answers, setAnswers] = useState({});
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [guestUsername, setGuestUsername] = useState(null); // for guest users
 
     useEffect(() => {
         loadTest();
+
+        // Cleanup function to clear guest username when the component unmounts
+        return () => {
+            if (guestUsername) {
+                localStorage.removeItem(`guestUsername_test_${id}`);
+            }
+        };
     }, [id]);
 
     const loadTest = async () => {
         try {
             const data = await testeService.getFull(id);
             setTest(data);
+            if (data.guestUsername) {
+                setGuestUsername(data.guestUsername);
+                localStorage.setItem(`guestUsername_test_${id}`, data.guestUsername);
+            }
         } catch (e) {
             console.error("Error loading test", e);
         }
@@ -64,7 +78,8 @@ const TakeTest = () => {
 
         try {
             // Send answers and get result
-            const result = await testeService.submitTest(id, answers);
+            const usernameToSend = user ? user.username : guestUsername
+            const result = await testeService.submitTest(id, answers, usernameToSend);
 
             // Navigate to result page with data
             navigate(`/teste/${id}/result`, {
@@ -90,6 +105,12 @@ const TakeTest = () => {
                 <p className="teste-small">
                     Created: <strong>{test.dataCrearii}</strong>
                 </p>
+
+                {guestUsername && (
+                    <p style={{ color: "#555", fontStyle: "italic" }}>
+                        You are taking this test as: <strong>{guestUsername}</strong>
+                    </p>
+                )}
 
                 <hr />
 
@@ -132,7 +153,7 @@ const TakeTest = () => {
                 </button>
             </div>
 
-            <ActiveUsers />
+            <ActiveUsers testId={id} guestUsername={guestUsername}/>
 
         </div>
     );

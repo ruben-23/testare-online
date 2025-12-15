@@ -10,7 +10,13 @@ import org.example.testareonline.mapper.TestMapper;
 import org.example.testareonline.repository.DomeniuRepository;
 import org.example.testareonline.repository.TestRepository;
 import org.example.testareonline.repository.UserRepository;
+import org.example.testareonline.service.ActiveUsersService;
+import org.example.testareonline.service.GuestService;
 import org.example.testareonline.service.TestService;
+import org.example.testareonline.service.UserService;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -24,6 +30,10 @@ public class TestServiceImpl implements TestService {
     private final UserRepository userRepository;
     private final DomeniuRepository domeniuRepository;
     private final TestMapper testMapper;
+    private final UserService userService;
+    private final GuestService guestService;
+    private final ActiveUsersService activeUsersService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Override
     public TestDTO createTest(TestRequest request) {
@@ -75,7 +85,7 @@ public class TestServiceImpl implements TestService {
     public void deleteTest(Integer id) {
         testRepository.deleteById(id);
     }
-    @Override
+
     public TestFullDTO getFullTestById(Integer id) {
         Test test = testRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Test not found"));
@@ -120,8 +130,32 @@ public class TestServiceImpl implements TestService {
                 .build();
     }
 
+    /**
+     * Handles taking a test, including username generation, adding to active users, and broadcasting.
+     * Returns the full test DTO with the final username set.
+     */
+    @Override
+    public TestFullDTO takeTest(Integer id) {
+        String finalUsername;
+        Integer userId = null;
+        // Check authentication
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAuthenticated = auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser");
+        if (isAuthenticated) {
+            userId = Integer.valueOf(auth.getPrincipal().toString());
+            finalUsername = userService.findUsernameById(userId);  // Logged-in user
+        }else {
+            finalUsername = guestService.generateUniqueRandomUsername(activeUsersService, id);
+        }
 
-    public TestResultDTO submitTest(Integer testId, List<AnswerSubmission> submissions) {
+        // Fetch and return test data
+        TestFullDTO test = getFullTestById(id);
+        test.setGuestUsername(finalUsername);
+        return test;
+    }
+
+    public TestResultDTO submitTest(Integer testId, SubmitTestRequest request) {
+        List<AnswerSubmission> submissions = request.getAnswers();
         Test test = testRepository.findById(testId)
                 .orElseThrow(() -> new RuntimeException("Test not found"));
 
@@ -151,7 +185,7 @@ public class TestServiceImpl implements TestService {
                     earnedScore += punctaj;
                 }
 
-                // Always add to total if it's a correct answer (even if user didn't select it)
+                // Always add to total if it's a correct answer
                 if (optiune.getIsCorrect()) {
                     maxPossibleScore += punctaj;
                 }

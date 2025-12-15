@@ -41,7 +41,8 @@
 }
 
 .teste-take-btn:hover,
-.teste-btn:hover {
+.teste-btn:hover,
+.teste-btn-2:hover {
     background: #005fa3;
 }
 
@@ -92,15 +93,17 @@
 /*    text-align: center;*/
 /*}*/
 
-/*.teste-btn {*/
-/*    display: inline-block;*/
-/*    margin-top: 10px;*/
-/*    padding: 8px 12px;*/
-/*    background: #0078d7;*/
-/*    color: white;*/
-/*    border-radius: 8px;*/
-/*    text-decoration: none;*/
-/*}*/
+.teste-btn-2 {
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #0193f3;
+    color: #ffffff;
+    border-radius: 8px;
+    text-decoration: none;
+}
 
 .teste-small {
     font-size: 0.85rem;

@@ -9,12 +9,11 @@ import { useAuth } from "../../context/AuthContext";
 import "./styles/Test.css";
 
 const TesteList = () => {
-    const { token } = useAuth();
+    const { user } = useAuth();
     const navigate = useNavigate();
 
     const [tests, setTests] = useState([]);
     const [domenii, setDomenii] = useState([]);
-    const [currentUser, setCurrentUser] = useState(null);
 
     const [search, setSearch] = useState("");
     const [selectedDomeniu, setSelectedDomeniu] = useState("all");
@@ -30,20 +29,6 @@ const TesteList = () => {
                 testeService.getAll(),
                 domeniiService.getAll()
             ]);
-
-            // Load user from token (optional endpoint)
-            let userId = null;
-            if (token) {
-                userId = JSON.parse(atob(token.split(".")[1])).id;
-            }
-            // const userId = JSON.parse(atob(token.split(".")[1])).id;
-
-            if (userId !== null) {
-                const userData = await userService.getById(userId);
-                setCurrentUser(userData);
-            }
-            // const userData = await userService.getById(userId);
-            // setCurrentUser(userData);
 
             const domeniiMap = {};
             domeniiRes.forEach(d => (domeniiMap[d.id] = d.nume));
@@ -91,9 +76,9 @@ const TesteList = () => {
     return (
         <div>
 
-            {/* HEADER CONTROLS (unchanged) */}
             <div className="teste-header-row">
                 <h1>Teste</h1>
+                {user && user?.id === test.idUser && ( <button className="teste-btn-2">+ Creeaza Test</button> )}
                 <div className="teste-controls">
 
                     <input
@@ -151,7 +136,7 @@ const TesteList = () => {
                         </button>
 
                         {/* AUTHOR OPTIONS */}
-                        {currentUser?.id === test.idUser && (
+                        {user?.id === test.idUser && (
                             <>
                                 <button className="teste-btn teste-edit">
                                     Edit

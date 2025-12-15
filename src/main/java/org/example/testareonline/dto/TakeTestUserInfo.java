@@ -1,18 +1,15 @@
-package org.example.testareonline.dto.request;
+package org.example.testareonline.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SubmitTestRequest {
+public class TakeTestUserInfo {
+    private String username;
     private Integer testId;
-    private List<AnswerSubmission> answers;
-    private String guestUsername;
 }
