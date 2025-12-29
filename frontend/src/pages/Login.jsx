@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import './styles/Auth.css';
 
 const Login = () => {
     const { login } = useAuth();
@@ -13,6 +14,7 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError("");
 
         try {
             const response = await axios.post("http://localhost:8080/auth/login", {
@@ -20,23 +22,19 @@ const Login = () => {
                 parola,
             });
 
-            const token = response.data.token;
-
-            login(token);     // store token in context + localStorage
-            navigate("/");    // redirect to home
-
+            login(response.data.token);
+            navigate("/");
         } catch (err) {
-            setError("Invalid credentials");
+            setError("Date de autentificare invalide");
         }
     };
 
     return (
         <div className="auth-container">
-            <h2>Login</h2>
+            <h2>Autentificare</h2>
+            {error && <p className="auth-message error">{error}</p>}
 
-            {error && <p style={{ color: "red" }}>{error}</p>}
-
-            <form onSubmit={handleSubmit}>
+            <form className="auth-form" onSubmit={handleSubmit}>
                 <label>Username</label>
                 <input
                     type="text"
@@ -45,7 +43,7 @@ const Login = () => {
                     required
                 />
 
-                <label>Parola</label>
+                <label>Parolă</label>
                 <input
                     type="password"
                     value={parola}
@@ -53,8 +51,12 @@ const Login = () => {
                     required
                 />
 
-                <button type="submit">Login</button>
+                <button className="auth-btn" type="submit">Autentificare</button>
             </form>
+
+            <div className="auth-footer">
+                Nu ai cont? <Link to="/register">Înregistrează-te</Link>
+            </div>
         </div>
     );
 };

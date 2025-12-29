@@ -29,7 +29,7 @@ const TakeTest = () => {
 
     const loadTest = async () => {
         try {
-            const data = await testeService.getFull(id);
+            const data = await testeService.takeTest(id);
             setTest(data);
             if (data.guestUsername) {
                 setGuestUsername(data.guestUsername);
@@ -94,21 +94,27 @@ const TakeTest = () => {
         }
     };
 
-    if (!test) return <p>Loading test...</p>;
+    if (!test) return <p>Se încarcă testul…</p>;
 
     return (
         <div className="test-with-users-layout">
             {/* LEFT side: test content */}
             <div className="test-content">
-                <button className="teste-btn" onClick={() => navigate("/teste")}>Back</button>
+                {/*<button className="teste-btn" onClick={() => navigate("/teste")}>Back</button>*/}
+                <button
+                    className="teste-btn teste-secondary"
+                    onClick={() => navigate("/teste")}
+                >
+                    Înapoi
+                </button>
                 <h2>{test.titlu}</h2>
                 <p className="teste-small">
-                    Created: <strong>{test.dataCrearii}</strong>
+                    Creat: <strong>{test.dataCrearii}</strong>
                 </p>
 
                 {guestUsername && (
                     <p style={{ color: "#555", fontStyle: "italic" }}>
-                        You are taking this test as: <strong>{guestUsername}</strong>
+                        Susții acest test ca: <strong>{guestUsername}</strong>
                     </p>
                 )}
 
@@ -137,20 +143,20 @@ const TakeTest = () => {
 
                         {errors[q.id] && (
                             <p style={{ color: "red", fontSize: "14px", margin: "8px 0 0" }}>
-                                Warning: Answer required
+                                Atenție: Răspuns obligatoriu
                             </p>
                         )}
                     </div>
                 ))}
 
                 <button
-                    className="teste-btn"
-                    style={{ marginTop: "30px" }}
+                    className="teste-btn teste-primary submit-test-btn"
                     onClick={handleSubmit}
                     disabled={isSubmitting}
                 >
-                    {isSubmitting ? "Submitting..." : "Submit Test"}
+                    {isSubmitting ? "Se trimite…" : "Trimite Testul"}
                 </button>
+
             </div>
 
             <ActiveUsers testId={id} guestUsername={guestUsername}/>

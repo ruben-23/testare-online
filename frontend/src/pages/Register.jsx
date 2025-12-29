@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import './styles/Auth.css';
 
 const Register = () => {
-    const { login } = useAuth();   // reuse login() to store the JWT
+    const { login } = useAuth();
     const navigate = useNavigate();
 
     const [username, setUsername] = useState("");
@@ -14,6 +15,8 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError("");
+        setSuccess("");
 
         try {
             const response = await axios.post("http://localhost:8080/auth/register", {
@@ -21,28 +24,24 @@ const Register = () => {
                 parola,
             });
 
-            const token = response.data.token;
-
-            login(token);       // Save JWT & mark user as logged in
-            navigate("/");      // Redirect to home after registering
-
+            login(response.data.token);
+            navigate("/");
         } catch (err) {
             if (err.response && err.response.status === 409) {
-                setError("Username already exists.");
+                setError("Username-ul există deja.");
             } else {
-                setError("Registration failed.");
+                setError("Înregistrarea a eșuat.");
             }
         }
     };
 
     return (
         <div className="auth-container">
-            <h2>Register</h2>
+            <h2>Înregistrare</h2>
+            {error && <p className="auth-message error">{error}</p>}
+            {success && <p className="auth-message success">{success}</p>}
 
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            {success && <p style={{ color: "green" }}>{success}</p>}
-
-            <form onSubmit={handleSubmit}>
+            <form className="auth-form" onSubmit={handleSubmit}>
                 <label>Username</label>
                 <input
                     type="text"
@@ -51,7 +50,7 @@ const Register = () => {
                     required
                 />
 
-                <label>Parola</label>
+                <label>Parolă</label>
                 <input
                     type="password"
                     value={parola}
@@ -59,8 +58,12 @@ const Register = () => {
                     required
                 />
 
-                <button type="submit">Create Account</button>
+                <button className="auth-btn" type="submit">Creează cont</button>
             </form>
+
+            <div className="auth-footer">
+                Ai deja cont? <Link to="/login">Autentificare</Link>
+            </div>
         </div>
     );
 };

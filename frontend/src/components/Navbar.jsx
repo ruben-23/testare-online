@@ -9,18 +9,18 @@ const Navbar = () => {
         <nav className="navbar">
             <h2 className="logo">TestApp</h2>
             <div className="nav-links">
-                <Link to="/">Home</Link>
+                <Link to="/">Acasă</Link>
                 <Link to="/teste">Teste</Link>
             </div>
             <div className="nav-links">
 
                 {!isLoggedIn && <>
-                    <Link to="/login">Login</Link>
-                    <Link to="/register">Register</Link>
+                    <Link to="/login">Autentificare</Link>
+                    <Link to="/register">Înregistrare</Link>
                 </>}
                 {isLoggedIn && <>
-                    <Link to="/profile">Profile</Link>
-                    <Link to="/logout">Logout</Link>
+                    <Link to="/profile">Profil</Link>
+                    <Link to="/logout">Deconectare</Link>
                 </>}
             </div>
 

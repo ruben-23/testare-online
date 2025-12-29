@@ -1,18 +1,58 @@
-
-.profile-card {
-    display: grid;
-    margin-top: 10px;
-    padding: 20px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    max-width: 400px
-}
-
-.profile-card div {
+.profile-container {
     display: flex;
-    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+    min-height: 60vh;
+    background: #f9faff;
 }
-.profile-card div p{
-    align-content: center;
+
+.profile-title {
+    font-size: 2rem;
+    color: #0078d7;
+    margin-bottom: 20px;
+}
+
+/* Card */
+.profile-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 24px 32px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Individual items */
+.profile-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e6f0;
+}
+
+.profile-item:last-child {
+    border-bottom: none;
+}
+
+.profile-label {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.profile-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+/* Optional: subtle hover effect on card */
+.profile-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+    transition: 0.2s ease;
 }

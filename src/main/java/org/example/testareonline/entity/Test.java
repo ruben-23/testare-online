@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -36,6 +37,6 @@ public class Test {
     private Domeniu domeniu;
 
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Intrebare> intrebari;
+    private List<Intrebare> intrebari  = new ArrayList<>();
 
 }

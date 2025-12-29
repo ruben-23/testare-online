@@ -17,15 +17,36 @@
     text-align: center;
 }
 
-.teste-btn {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 8px 12px;
-    background: #0078d7;
-    color: white;
-    border-radius: 8px;
-    text-decoration: none;
+.teste-card-actions {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
+
+/* RESULT BUTTONS CONTAINER */
+.result-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+/* BASE BUTTON */
+.teste-btn {
+    border: none;
+    padding: 9px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+            background 0.2s ease,
+            transform 0.1s ease,
+            box-shadow 0.1s ease;
+}
+
 
 .teste-single {
     margin-top: 20px;
@@ -85,24 +106,46 @@
     gap: 20px;
 }
 
-/*.teste-card {*/
-/*    background: #fff;*/
-/*    padding: 20px;*/
-/*    border-radius: 12px;*/
-/*    box-shadow: 0 2px 6px rgba(0,0,0,0.15);*/
-/*    text-align: center;*/
-/*}*/
-
+/* CREATE TEST BUTTON (HEADER) */
 .teste-btn-2 {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 10px 16px;
     font-size: 14px;
     font-weight: 600;
-    display: inline-block;
-    margin-top: 10px;
-    padding: 8px 12px;
-    background: #0193f3;
+
     color: #ffffff;
-    border-radius: 8px;
-    text-decoration: none;
+    background: linear-gradient(135deg, #1da1f2, #0078d7);
+
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+
+    box-shadow: 0 4px 10px rgba(0, 120, 215, 0.25);
+    transition:
+            background 0.2s ease,
+            transform 0.1s ease,
+            box-shadow 0.1s ease;
+}
+
+.submit-test-btn {
+    margin-top: 30px;
+    align-self: flex-start;
+}
+
+/* Hover */
+.teste-btn-2:hover {
+    background: linear-gradient(135deg, #0078d7, #005fa3);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 120, 215, 0.35);
+}
+
+/* Active (click) */
+.teste-btn-2:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(0, 120, 215, 0.25);
 }
 
 .teste-small {
@@ -132,4 +175,42 @@
 /* Left side */
 .test-content {
     flex: 1;
+}
+
+/* PRIMARY (Take Test) */
+.teste-primary {
+    background: linear-gradient(135deg, #1da1f2, #0078d7);
+    color: #fff;
+}
+
+.teste-primary:hover {
+    background: linear-gradient(135deg, #0078d7, #005fa3);
+    box-shadow: 0 4px 10px rgba(0, 120, 215, 0.3);
+    transform: translateY(-1px);
+}
+
+/* SECONDARY (Edit) */
+.teste-secondary {
+    background: #e8f3ff;
+    color: #0078d7;
+}
+
+.teste-secondary:hover {
+    background: #d7ebff;
+}
+
+/* DANGER (Delete) */
+.teste-danger {
+    background: #fff0f0;
+    color: #d32f2f;
+}
+
+.teste-danger:hover {
+    background: #ffe2e2;
+}
+
+.teste-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+    transition: 0.2s ease;
 }

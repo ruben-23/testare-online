@@ -1,6 +1,6 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
-import './styles/Profile.css'
+import './styles/Profile.css';
 
 const Profile = () => {
     const { user } = useAuth();
@@ -9,24 +9,23 @@ const Profile = () => {
 
     return (
         <div className="profile-container">
-            <h1>Your Profile</h1>
+            <h1 className="profile-title">Profilul tău</h1>
 
             <div className="profile-card">
-                <div>
-                    <p>Username:</p>
-                    <h3>{user.username}</h3>
+                <div className="profile-item">
+                    <p className="profile-label">Username</p>
+                    <h3 className="profile-value">{user.username}</h3>
                 </div>
 
-                <div>
-                    <p>Role:</p>
-                    <h3>{user.rol}</h3>
+                <div className="profile-item">
+                    <p className="profile-label">Rol</p>
+                    <h3 className="profile-value">{user.rol}</h3>
                 </div>
 
-                <div>
-                    <p>ID:</p>
-                    <h3>{user.id}</h3>
+                <div className="profile-item">
+                    <p className="profile-label">ID</p>
+                    <h3 className="profile-value">{user.id}</h3>
                 </div>
-
             </div>
         </div>
     );

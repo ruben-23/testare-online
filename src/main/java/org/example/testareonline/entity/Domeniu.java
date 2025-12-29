@@ -3,6 +3,7 @@ package org.example.testareonline.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -22,5 +23,5 @@ public class Domeniu {
     private String nume;
 
     @OneToMany(mappedBy = "domeniu", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Test> teste;
+    private List<Test> teste  = new ArrayList<>();
 }

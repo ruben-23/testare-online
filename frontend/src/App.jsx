@@ -5,7 +5,6 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import "./App.css";
-import Test from "./modules/teste/Test.jsx";
 import TesteList from './modules/teste/TesteList.jsx'
 import TesteLayout from './modules/teste/TesteLayout.jsx'
 import Logout from "./pages/Logout.jsx";
@@ -36,7 +35,6 @@ function App() {
 
                 <Route path="teste" element={<TesteLayout />}>
                     <Route index element={<TesteList />} />
-                    <Route path=":id" element={<Test />} />
                     <Route path=":id/take" element={<TakeTest />} />
                     <Route path=":id/result" element={<TestResult />} />
                 </Route>

@@ -39,10 +39,10 @@ const ActiveUsers = ({ testId, guestUsername }) => {
 
     return (
         <div className="active-users-wrapper">
-            <h3 className="active-users-title">Active Users</h3>
+            <h3 className="active-users-title">Utilizatori care susțin acest test</h3>
             <div className="active-users-list">
                 {users.length === 0 ? (
-                    <p>No active users...</p>
+                    <p>Niciun utilizator activ...</p>
                 ) : (
                     users.map((username, index) => (
                         <div key={index} className="active-user-item">

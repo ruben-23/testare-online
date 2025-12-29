@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import testeService from "../../services/testeService";
 import domeniiService from "../../services/domeniiService";
 import userService from "../../services/userService";
 import { useAuth } from "../../context/AuthContext";
+import CreateTest from "./CreateTest";
 
 import "./styles/Test.css";
 
@@ -14,10 +15,14 @@ const TesteList = () => {
 
     const [tests, setTests] = useState([]);
     const [domenii, setDomenii] = useState([]);
+    const [showCreateTest, setShowCreateTest] = useState(false);
+    const [editingTestId, setEditingTestId] = useState(null);
 
     const [search, setSearch] = useState("");
     const [selectedDomeniu, setSelectedDomeniu] = useState("all");
-    const [sortBy, setSortBy] = useState("data");
+    const [sortBy, setSortBy] = useState("newest");
+
+
 
     useEffect(() => {
         loadData();
@@ -56,6 +61,38 @@ const TesteList = () => {
         }
     };
 
+    const handleOpenCreateTest = () => {
+        setEditingTestId(null);
+        setShowCreateTest(true);
+    };
+
+    const handleOpenEditTest = (testId) => {
+        setEditingTestId(testId);
+        setShowCreateTest(true);
+    };
+
+    const handleDeleteTest = async (testId) => {
+        if (window.confirm("Ești sigur că vrei să ștergi acest test?")) {
+            try {
+                await testeService.delete(testId);
+                alert("Testul a fost șters cu succes!");
+                loadData();
+            } catch (err) {
+                console.error("Failed to delete test:", err);
+                alert("Ștergerea testului a eșuat");
+            }
+        }
+    };
+
+    const handleTestSaved = () => {
+        setShowCreateTest(false);
+        setEditingTestId(null);
+        loadData();
+    };
+
+    const formatDate = (date) =>
+        new Date(date).toLocaleDateString();
+
     // SEARCH
     let filtered = tests.filter(t =>
         t.title.toLowerCase().includes(search.toLowerCase())
@@ -69,21 +106,37 @@ const TesteList = () => {
     }
 
     // SORT
-    const sorted = [...filtered].sort((a, b) =>
-        new Date(a.date) - new Date(b.date)
-    );
+    const sorted = [...filtered].sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+
+        if (sortBy === "newest") {
+            return dateB - dateA; // newest first
+        }
+
+        if (sortBy === "oldest") {
+            return dateA - dateB; // oldest first
+        }
+
+        return 0;
+    });
 
     return (
         <div>
-
             <div className="teste-header-row">
                 <h1>Teste</h1>
-                {user && user?.id === test.idUser && ( <button className="teste-btn-2">+ Creeaza Test</button> )}
+                {user && (
+                    <button
+                        className="teste-btn-2"
+                        onClick={handleOpenCreateTest}
+                    >
+                        + Creeaza Test
+                    </button>
+                )}
                 <div className="teste-controls">
-
                     <input
                         type="text"
-                        placeholder="Search teste…"
+                        placeholder="Caută teste…"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="teste-search"
@@ -107,7 +160,8 @@ const TesteList = () => {
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value)}
                     >
-                        <option value="data">Data Creării</option>
+                        <option value="newest">Cele mai noi</option>
+                        <option value="oldest">Cele mai vechi</option>
                     </select>
                 </div>
             </div>
@@ -124,34 +178,50 @@ const TesteList = () => {
                             Autor: <strong>{test.username}</strong>
                         </p>
                         <p className="teste-small">
-                            Data: <strong>{test.date}</strong>
+                            Data: <strong>{formatDate(test.date)}</strong>
+                        </p>
+                        <p className="teste-small">
+                            Ora: <strong>{test.date.split("T")[1]}</strong>
                         </p>
 
-                        {/* BUTTONS */}
-                        <button
-                            className="teste-btn"
-                            onClick={() => navigate(`/teste/${test.id}/take`)}
-                        >
-                            Take Test
-                        </button>
+                        <div className="teste-card-actions">
+                            <button
+                                className="teste-btn teste-primary"
+                                onClick={() => navigate(`/teste/${test.id}/take`)}
+                            >
+                                Susține Testul
+                            </button>
 
-                        {/* AUTHOR OPTIONS */}
-                        {user?.id === test.idUser && (
-                            <>
-                                <button className="teste-btn teste-edit">
-                                    Edit
-                                </button>
+                            {user?.id === test.idUser && (
+                                <>
+                                    <button
+                                        className="teste-btn teste-secondary"
+                                        onClick={() => handleOpenEditTest(test.id)}
+                                    >
+                                        Editează
+                                    </button>
 
-                                <button className="teste-btn teste-delete">
-                                    Delete
-                                </button>
-                            </>
-                        )}
+                                    <button
+                                        className="teste-btn teste-danger"
+                                        onClick={() => handleDeleteTest(test.id)}
+                                    >
+                                        Șterge
+                                    </button>
+                                </>
+                            )}
+                        </div>
 
                     </div>
                 ))}
             </div>
 
+            {/* CREATE/EDIT TEST MODAL */}
+            {showCreateTest && (
+                <CreateTest
+                    testId={editingTestId}
+                    onClose={handleTestSaved}
+                />
+            )}
         </div>
     );
 };
